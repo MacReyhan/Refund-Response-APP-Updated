@@ -1,0 +1,5 @@
+{
+  "name": "Refund Response App",
+  "description": "A specialized tool for customer support agents to generate standardized refund responses, track refund status, and access quick snippets.",
+  "requestFramePermissions": []
+}
