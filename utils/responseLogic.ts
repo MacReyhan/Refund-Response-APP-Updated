@@ -1,3 +1,4 @@
+import { GoogleGenAI } from "@google/genai";
 import { FormData, RefundMode, RefundStatus } from '../types';
 
 export const getTodaysFormattedDate = (): string => {
@@ -28,7 +29,8 @@ export const formatInputDate = (inputStr: string): string => {
   return inputStr;
 };
 
-export const generateRefundResponse = (data: FormData): string => {
+// Fallback logic / Template Logic
+export const generateTemplateResponse = (data: FormData): string => {
   const { amount, rrn, initDate, mode, status, superCoinsBalance } = data;
   const formattedDate = formatInputDate(initDate);
   const today = getTodaysFormattedDate();
@@ -131,4 +133,50 @@ export const generateRefundResponse = (data: FormData): string => {
   }
 
   return response;
+};
+
+// Main function to decide between AI and Template
+export const generateRefundResponse = async (data: FormData): Promise<string> => {
+  if (process.env.API_KEY) {
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const systemInstruction = `You are a professional, empathetic customer support agent. 
+      Your goal is to write a refund status response based on the provided data.
+      
+      Strict Rules:
+      1. If status is 'Processing', mention it usually takes 2-4 hours.
+      2. If status is 'Completed (within 2-4 hours)', mention to check bank statement/SMS.
+      3. If status is 'Completed (post 2-4 hours)', suggest escalating to bank if not visible.
+      4. Use the specific Refund Mode mentioned.
+      5. Include the Amount and RRN (if provided).
+      6. Keep it concise and clear.
+      
+      Data:
+      Amount: ${data.amount}
+      RRN: ${data.rrn || 'N/A'}
+      Date: ${data.initDate}
+      Mode: ${data.mode}
+      Status: ${data.status}
+      SuperCoins Balance: ${data.superCoinsBalance || 'N/A'}
+      Today's Date: ${getTodaysFormattedDate()}
+      `;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: "Generate the refund response now.",
+        config: {
+          systemInstruction: systemInstruction,
+          temperature: 0.3, // Low temperature for consistent, policy-adhering responses
+        }
+      });
+      
+      return response.text || generateTemplateResponse(data);
+    } catch (error) {
+      console.error("Gemini API Error, falling back to template:", error);
+      return generateTemplateResponse(data);
+    }
+  } else {
+    // Fallback to synchronous template logic if no API key
+    return generateTemplateResponse(data);
+  }
 };
