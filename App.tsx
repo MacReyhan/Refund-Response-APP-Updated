@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, Moon, Sun, Copy, Check, ChevronDown, RefreshCw, RotateCcw, Loader2 } from 'lucide-react';
+import { Menu, Moon, Sun, Copy, Check, ChevronDown, RefreshCw, RotateCcw } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import { RefundMode, RefundStatus, FormData } from './types';
 import { generateRefundResponse } from './utils/responseLogic';
@@ -9,7 +9,6 @@ const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
   const [generatedText, setGeneratedText] = useState<string>('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [isGenerating, setIsGenerating] = useState<boolean>(false);
 
   // Form State
   const [formData, setFormData] = useState<FormData>({
@@ -66,18 +65,9 @@ const App: React.FC = () => {
     setGeneratedText('');
   };
 
-  const handleGenerate = async () => {
-    setIsGenerating(true);
-    try {
-      const response = await generateRefundResponse(formData);
-      setGeneratedText(response);
-    } catch (error) {
-      console.error("Generation failed", error);
-      setToastMessage("Error generating response");
-      setTimeout(() => setToastMessage(null), 3000);
-    } finally {
-      setIsGenerating(false);
-    }
+  const handleGenerate = () => {
+    const response = generateRefundResponse(formData);
+    setGeneratedText(response);
   };
 
   const copyToClipboard = async (text: string) => {
@@ -262,16 +252,11 @@ const App: React.FC = () => {
               <div className="md:col-span-2 pt-4">
                 <button
                   onClick={handleGenerate}
-                  disabled={isGenerating}
-                  className="group relative w-full py-4 px-6 bg-brand-primary hover:bg-[#8a4045] dark:bg-brand-medRed dark:hover:bg-[#a66262] text-white font-bold rounded-xl shadow-lg shadow-brand-primary/20 hover:shadow-brand-primary/40 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:pointer-events-none transition-all duration-200 flex justify-center items-center gap-2 overflow-hidden"
+                  className="group relative w-full py-4 px-6 bg-brand-primary hover:bg-[#8a4045] dark:bg-brand-medRed dark:hover:bg-[#a66262] text-white font-bold rounded-xl shadow-lg shadow-brand-primary/20 hover:shadow-brand-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 flex justify-center items-center gap-2 overflow-hidden"
                 >
                   <span className="relative z-10 flex items-center gap-2">
-                    {isGenerating ? (
-                      <Loader2 size={18} className="animate-spin" />
-                    ) : (
-                      <RefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-500" />
-                    )}
-                    {isGenerating ? 'Generating...' : 'Generate Response'}
+                    <RefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-500" />
+                    Generate Response
                   </span>
                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                 </button>
