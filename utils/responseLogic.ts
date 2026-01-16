@@ -28,12 +28,37 @@ export const formatInputDate = (inputStr: string): string => {
   return inputStr;
 };
 
+export const formatSLADate = (inputStr: string): string => {
+  if (!inputStr) return "";
+  // Regex matches format: 28 Dec 25 (Date only)
+  const regex = /^(\d{1,2})\s([A-Za-z]{3})\s(\d{2})$/;
+  const match = inputStr.match(regex);
+
+  if (match) {
+    const day = match[1];
+    const monthShort = match[2];
+    const yearShort = match[3];
+    const months: { [key: string]: string } = {
+      'Jan': 'January', 'Feb': 'February', 'Mar': 'March', 'Apr': 'April',
+      'May': 'May', 'Jun': 'June', 'Jul': 'July', 'Aug': 'August',
+      'Sep': 'September', 'Oct': 'October', 'Nov': 'November', 'Dec': 'December'
+    };
+    const monthFull = months[monthShort] || monthShort;
+    const yearFull = "20" + yearShort;
+    return `${monthFull} ${day}, ${yearFull}`;
+  }
+
+  // Fallback to existing formatter if format doesn't match (e.g. contains time)
+  return formatInputDate(inputStr);
+};
+
 // Main Template Logic
 export const generateRefundResponse = (data: FormData): string => {
-  const { amount, rrn, initDate, mode, status, superCoinsBalance } = data;
+  const { amount, rrn, initDate, mode, status, superCoinsBalance, sla } = data;
   const formattedDate = formatInputDate(initDate);
   const today = getTodaysFormattedDate();
   const safeRrn = rrn.trim();
+  const formattedSLA = sla ? formatSLADate(sla) : '';
 
   let response = "";
 
@@ -60,39 +85,39 @@ export const generateRefundResponse = (data: FormData): string => {
     const isCreditCard = mode === RefundMode.CreditCard;
 
     if (safeRrn && isNetBankingGroup) {
-      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} in the next 2-4 hours with your bank reference number ${safeRrn}.\n`;
+      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} by ${formattedSLA} with your bank reference number ${safeRrn}.\n`;
       response += `Check the bank account statement from ${today} date to the present date (use the bank's app/website/ or contact customer care/bank statement or passbook).\n`;
       response += `Search for a refund with the keyword 'Flipkart'.`;
     }
     else if (!safeRrn && isNetBankingGroup) {
-      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} in the next 2-4 hours.\n`;
+      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} by ${formattedSLA}.\n`;
       response += `Check the bank account statement from ${today} date to the present date (use the bank's app/website/ or contact customer care/bank statement or passbook).\n`;
       response += `Search for a refund with the keyword 'Flipkart'.`;
     }
     else if (!safeRrn && isUpiGroup) {
-      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} in the next 2-4 hours.\n`;
+      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} by ${formattedSLA}.\n`;
       response += `Check the bank account statement from ${today} date to the present date (use the bank's app/website/ or contact customer care/bank statement or passbook).\n`;
       response += `For any UPI transaction, I request you to check the bank account statement for a refund. Search for a refund with the keyword 'Flipkart'.`;
     }
     else if (safeRrn && isUpiGroup) {
-      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} in the next 2-4 hours with your bank reference number ${safeRrn}.\n`;
+      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} by ${formattedSLA} with your bank reference number ${safeRrn}.\n`;
       response += `Check the bank account statement from ${today} date to the present date (use the bank's app/website/ or contact customer care/bank statement or passbook).\n`;
       response += `For any UPI transaction, I request you to check the bank account statement for a refund. Search for a refund with the keyword 'Flipkart'.`;
     }
     else if (!safeRrn && isCreditCard) {
-      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} in the next 2-4 hours.\n`;
+      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} by ${formattedSLA}.\n`;
       response += `Check the credit card statement from ${today} date to the present date (use the bank's app/website/ or contact customer care/bank statement or passbook).\n`;
       response += `For the credit card transaction, verify both the billed and unbilled sections of the bank statement to view the refund amount. Search for a refund with the keyword 'Flipkart'.`;
     }
     else if (safeRrn && isCreditCard) {
-      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} in the next 2-4 hours with your bank reference number ${safeRrn}.\n`;
+      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} by ${formattedSLA} with your bank reference number ${safeRrn}.\n`;
       response += `Check the credit card statement from ${today} date to the present date (use the bank's app/website/ or contact customer care/bank statement or passbook).\n`;
       response += `For the credit card transaction, verify both the billed and unbilled sections of the bank statement to view the refund amount. Search for a refund with the keyword 'Flipkart'.`;
     }
     else if (mode === RefundMode.GiftCardWallet) {
-      response = `I can see that the Gift Card refund of Rs ${amount} has been completed on ${today}, and sent to the registered email address.\n\n`;
-      response += `To view Gift Card balance: - {For App} Go to 'Saved credit/Debit & gift cards' under 'Account'. - {For Website} Go to 'My Profile' >> Select 'Gift Cards' under Payments.\n\n`;
-      response += `Gift Card is valid for one year from the date of purchase.\n`;
+      response = `The Gift Card refund of Rs ${amount} will be credited by ${formattedSLA}.\\n\\n`;
+      response += `To view Gift Card balance: - {For App} Go to 'Saved credit/Debit & gift cards' under 'Account'. - {For Website} Go to 'My Profile' >> Select 'Gift Cards' under Payments.\\n\\n`;
+      response += `Gift Card is valid for one year from the date of purchase.\\n`;
       response += `SMS will be sent every time a customer uses a Gift Card or a refund of the Gift Card is initiated (easy transaction tracking).`;
     }
     else if (mode === RefundMode.GiftCardQC) {
@@ -104,9 +129,9 @@ export const generateRefundResponse = (data: FormData): string => {
     return response;
   }
 
-  // --- COMPLETED (POST 2-4 HOURS) ---
+  // --- COMPLETED (POST SLA) ---
   if (status === RefundStatus.CompletedPost) {
-    response = `Rs ${amount} for the item was refunded to ${mode} and should reflect in your account latest by ${today}.\n`;
+    response = `Rs ${amount} for the item was refunded to ${mode} and should reflect in your account latest by ${formattedSLA}.\\n`;
 
     if (mode === RefundMode.CreditCard) {
       response += `Check the credit card statement from ${today} date to the present date (use the bank's app/website/ or contact customer care/bank statement or passbook).\n`;

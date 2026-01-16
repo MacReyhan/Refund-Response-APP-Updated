@@ -13,8 +13,8 @@ export enum RefundMode {
 
 export enum RefundStatus {
   Processing = "Processing",
-  CompletedWithin = "Completed (within 2-4 hours)",
-  CompletedPost = "Completed (post 2-4 hours)"
+  CompletedWithin = "Completed (within SLA)",
+  CompletedPost = "Completed (post SLA)"
 }
 
 export interface FormData {
@@ -24,4 +24,5 @@ export interface FormData {
   mode: RefundMode;
   status: RefundStatus;
   superCoinsBalance?: string;
+  sla?: string;
 }

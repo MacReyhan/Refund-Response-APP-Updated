@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, Moon, Sun, Copy, Check, ChevronDown, RefreshCw, RotateCcw } from 'lucide-react';
+import { Menu, Moon, Sun, Copy, Check, ChevronDown, RefreshCw, RotateCcw, Sparkles } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import { RefundMode, RefundStatus, FormData } from './types';
 import { generateRefundResponse } from './utils/responseLogic';
@@ -17,7 +17,8 @@ const App: React.FC = () => {
     initDate: '',
     mode: RefundMode.CreditCard,
     status: RefundStatus.Processing,
-    superCoinsBalance: ''
+    superCoinsBalance: '',
+    sla: ''
   });
 
   // Handle Dark Mode
@@ -42,7 +43,7 @@ const App: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
+
     // Strict numeric restriction for amount
     if (name === 'amount') {
       const numericValue = value.replace(/[^0-9]/g, '');
@@ -60,7 +61,8 @@ const App: React.FC = () => {
       initDate: '',
       mode: RefundMode.CreditCard,
       status: RefundStatus.Processing,
-      superCoinsBalance: ''
+      superCoinsBalance: '',
+      sla: ''
     });
     setGeneratedText('');
   };
@@ -87,23 +89,24 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen bg-[#FDFCFD] dark:bg-[#0f0f0f] flex font-sans text-slate-800 dark:text-slate-100 transition-colors duration-300 relative overflow-hidden`}>
-      
-      {/* Background Ambience */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-brand-light/10 dark:bg-brand-dark/30 blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-brand-pink/10 dark:bg-brand-medRed/20 blur-[120px]" />
+    <div className={`min-h-screen bg-slate-50 dark:bg-[#0f0f0f] flex font-sans text-slate-800 dark:text-slate-100 transition-colors duration-300 relative overflow-hidden`}>
+
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-pink/20 dark:bg-brand-primary/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob" />
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-brand-royal/20 dark:bg-brand-royal/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000" />
+        <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-brand-vivid/20 dark:bg-brand-vivid/10 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000" />
       </div>
 
       {/* Sidebar */}
-      <Sidebar 
-        isOpen={isSidebarOpen} 
-        onClose={() => setIsSidebarOpen(false)} 
-        onCopy={copyToClipboard} 
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        onCopy={copyToClipboard}
       />
 
       {/* Main Content Area */}
-      <div 
+      <div
         className={`relative z-10 flex-1 transition-all duration-300 flex justify-center items-start pt-6 md:pt-12 px-4 pb-12
           ${isSidebarOpen ? 'md:ml-[320px]' : 'ml-0'}
         `}
@@ -111,7 +114,7 @@ const App: React.FC = () => {
         {/* Toggle Button (Floating) */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className={`fixed top-6 z-40 p-3 rounded-xl bg-white dark:bg-[#1a1a1a] text-brand-primary dark:text-brand-pink shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-100 dark:border-white/10 hover:scale-105 hover:bg-brand-primary hover:text-white dark:hover:bg-brand-medRed dark:hover:text-white transition-all duration-300
+          className={`fixed top-6 z-40 p-3 rounded-xl bg-white/80 dark:bg-[#1a1a1a]/80 backdrop-blur text-brand-primary dark:text-brand-pink shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-gray-100 dark:border-white/10 hover:scale-105 hover:bg-gradient-to-r hover:from-brand-primary hover:to-brand-royal hover:text-white dark:hover:text-white transition-all duration-300
             ${isSidebarOpen ? 'left-[340px]' : 'left-6'}
           `}
           aria-label="Toggle Sidebar"
@@ -120,128 +123,158 @@ const App: React.FC = () => {
         </button>
 
         {/* Card Container */}
-        <div className="w-full max-w-3xl flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-500">
-          
+        <div className="w-full max-w-3xl flex flex-col gap-8 animate-in fade-in zoom-in-95 duration-500">
+
           {/* Main Card */}
-          <div className="bg-white/80 dark:bg-[#1a1a1a]/80 backdrop-blur-2xl rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none border border-white/50 dark:border-white/5 p-6 md:p-10">
-            
+          <div className="bg-white/70 dark:bg-[#1a1a1a]/70 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_40px_rgba(0,0,0,0.08)] dark:shadow-none border border-white/60 dark:border-white/10 p-6 md:p-10 relative overflow-hidden group">
+            {/* Subtle top border gradient */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-primary via-brand-vivid to-brand-royal opacity-80" />
+
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4 border-b border-gray-100 dark:border-white/5 pb-6">
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-brand-primary to-brand-medRed bg-clip-text text-transparent">
-                  Refund Response
+                <h1 className="text-3xl md:text-4xl font-extrabold pb-2">
+                  <span className="bg-gradient-to-r from-brand-primary via-brand-medRed to-brand-royal bg-clip-text text-transparent">
+                    Refund Response
+                  </span>
                 </h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                  <Sparkles size={14} className="text-brand-vivid" />
                   Generate standardized customer support messages
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 <button
                   onClick={handleReset}
-                  className="p-2 rounded-full bg-gray-100 dark:bg-white/5 text-gray-500 hover:text-brand-primary hover:bg-white hover:shadow-md dark:hover:bg-white/10 dark:text-gray-400 dark:hover:text-brand-pink transition-all"
+                  className="p-2.5 rounded-xl bg-gray-50/50 dark:bg-white/5 text-gray-500 hover:text-brand-royal hover:bg-brand-royal/5 hover:scale-105 transition-all duration-200"
                   title="Reset Form"
                 >
                   <RotateCcw size={18} />
                 </button>
                 <button
                   onClick={() => setIsDarkMode(!isDarkMode)}
-                  className="group flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 font-medium text-sm hover:bg-white hover:shadow-md dark:hover:bg-white/10 transition-all"
+                  className="group flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-50/50 dark:bg-white/5 text-gray-600 dark:text-gray-300 font-medium text-sm hover:bg-white hover:shadow-lg dark:hover:bg-white/10 hover:-translate-y-0.5 transition-all duration-200"
                 >
-                  {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
-                  <span>{isDarkMode ? 'Light' : 'Dark'}</span>
+                  {isDarkMode ? <Sun size={18} className="text-amber-500" /> : <Moon size={18} className="text-brand-royal" />}
                 </button>
               </div>
             </div>
 
             {/* Form */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
-              
-              <div className="space-y-1.5 md:col-span-1">
-                <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide ml-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
+
+              {/* Amount Input */}
+              <div className="space-y-2 md:col-span-1 group/field">
+                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider ml-1 group-focus-within/field:text-brand-royal transition-colors">
                   Refund Amount
                 </label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">₹</span>
+                <div className="relative transform transition-transform duration-200 focus-within:-translate-y-1">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-primary/60 font-semibold text-lg">₹</span>
                   <input
                     type="text"
                     name="amount"
                     value={formData.amount}
                     onChange={handleInputChange}
                     placeholder="499"
-                    className="w-full pl-8 pr-4 py-3 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-medium focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all placeholder:text-gray-300"
+                    className="w-full pl-9 pr-4 py-3.5 rounded-2xl bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-semibold text-lg shadow-sm focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary/50 outline-none transition-all placeholder:text-gray-300"
                   />
                 </div>
               </div>
 
-              <div className="space-y-1.5 md:col-span-1">
-                <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide ml-1">
+              {/* RRN Input */}
+              <div className="space-y-2 md:col-span-1 group/field">
+                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider ml-1 group-focus-within/field:text-brand-vivid transition-colors">
                   RRN (Optional)
                 </label>
-                <input
-                  type="text"
-                  name="rrn"
-                  value={formData.rrn}
-                  onChange={handleInputChange}
-                  placeholder="Reference Number"
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-medium focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all placeholder:text-gray-300"
-                />
+                <div className="transform transition-transform duration-200 focus-within:-translate-y-1">
+                  <input
+                    type="text"
+                    name="rrn"
+                    value={formData.rrn}
+                    onChange={handleInputChange}
+                    placeholder="Reference Number"
+                    className="w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-semibold text-lg shadow-sm focus:ring-4 focus:ring-brand-vivid/10 focus:border-brand-vivid/50 outline-none transition-all placeholder:text-gray-300"
+                  />
+                </div>
               </div>
 
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide ml-1">
+              {/* Date Input */}
+              <div className="space-y-2 md:col-span-2 group/field">
+                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider ml-1 group-focus-within/field:text-brand-ocean transition-colors">
                   Refund Initiated Date
                 </label>
-                <input
-                  type="text"
-                  name="initDate"
-                  value={formData.initDate}
-                  onChange={handleInputChange}
-                  placeholder="e.g. 28 Dec 25, 02:44 am"
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-medium focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all placeholder:text-gray-300"
-                />
+                <div className="transform transition-transform duration-200 focus-within:-translate-y-1">
+                  <input
+                    type="text"
+                    name="initDate"
+                    value={formData.initDate}
+                    onChange={handleInputChange}
+                    placeholder="e.g. 28 Dec 25, 02:44 am"
+                    className="w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-semibold text-lg shadow-sm focus:ring-4 focus:ring-brand-ocean/10 focus:border-brand-ocean/50 outline-none transition-all placeholder:text-gray-300"
+                  />
+                </div>
               </div>
 
-              <div className="space-y-1.5 md:col-span-1">
-                <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide ml-1">
+              {/* SLA Timeframe Input */}
+              <div className="space-y-2 md:col-span-2 group/field">
+                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider ml-1 group-focus-within/field:text-brand-medRed transition-colors">
+                  SLA Date (Deadline)
+                </label>
+                <div className="transform transition-transform duration-200 focus-within:-translate-y-1">
+                  <input
+                    type="text"
+                    name="sla"
+                    value={formData.sla}
+                    onChange={handleInputChange}
+                    placeholder="e.g. 28 Dec 25"
+                    className="w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-semibold text-lg shadow-sm focus:ring-4 focus:ring-brand-medRed/10 focus:border-brand-medRed/50 outline-none transition-all placeholder:text-gray-300"
+                  />
+                </div>
+              </div>
+
+              {/* Mode Select */}
+              <div className="space-y-2 md:col-span-1 group/field">
+                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider ml-1 group-focus-within/field:text-brand-primary transition-colors">
                   Refund Mode
                 </label>
-                <div className="relative">
+                <div className="relative transform transition-transform duration-200 focus-within:-translate-y-1">
                   <select
                     name="mode"
                     value={formData.mode}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-medium focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none appearance-none transition-all cursor-pointer"
+                    className="w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-semibold text-base shadow-sm focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary/50 outline-none appearance-none transition-all cursor-pointer"
                   >
                     {Object.values(RefundMode).map(mode => (
                       <option key={mode} value={mode}>{mode}</option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-brand-primary pointer-events-none" size={18} strokeWidth={2.5} />
                 </div>
               </div>
 
-              <div className="space-y-1.5 md:col-span-1">
-                <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide ml-1">
+              {/* Status Select */}
+              <div className="space-y-2 md:col-span-1 group/field">
+                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider ml-1 group-focus-within/field:text-brand-royal transition-colors">
                   Status
                 </label>
-                <div className="relative">
+                <div className="relative transform transition-transform duration-200 focus-within:-translate-y-1">
                   <select
                     name="status"
                     value={formData.status}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-medium focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none appearance-none transition-all cursor-pointer"
+                    className="w-full px-4 py-3.5 rounded-2xl bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-semibold text-base shadow-sm focus:ring-4 focus:ring-brand-royal/10 focus:border-brand-royal/50 outline-none appearance-none transition-all cursor-pointer"
                   >
                     {Object.values(RefundStatus).map(status => (
                       <option key={status} value={status}>{status}</option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-brand-royal pointer-events-none" size={18} strokeWidth={2.5} />
                 </div>
               </div>
 
               {formData.mode === RefundMode.SuperCoins && (
-                <div className="space-y-1.5 md:col-span-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                  <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide ml-1">
+                <div className="space-y-2 md:col-span-2 animate-in fade-in slide-in-from-top-4 duration-300">
+                  <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider ml-1 text-yellow-500">
                     SuperCoins Balance
                   </label>
                   <input
@@ -250,21 +283,22 @@ const App: React.FC = () => {
                     value={formData.superCoinsBalance || ''}
                     onChange={handleInputChange}
                     placeholder="Enter current balance (e.g. 120)"
-                    className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-medium focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all placeholder:text-gray-300"
+                    className="w-full px-4 py-3.5 rounded-2xl bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-700/30 text-gray-900 dark:text-white font-semibold text-lg shadow-sm focus:ring-4 focus:ring-yellow-500/20 focus:border-yellow-500 outline-none transition-all placeholder:text-gray-300"
                   />
                 </div>
               )}
 
-              <div className="md:col-span-2 pt-4">
+              {/* Generate Button */}
+              <div className="md:col-span-2 pt-6">
                 <button
                   onClick={handleGenerate}
-                  className="group relative w-full py-4 px-6 bg-brand-primary hover:bg-[#8a4045] dark:bg-brand-medRed dark:hover:bg-[#a66262] text-white font-bold rounded-xl shadow-lg shadow-brand-primary/20 hover:shadow-brand-primary/40 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 disabled:pointer-events-none transition-all duration-200 flex justify-center items-center gap-2 overflow-hidden"
+                  className="group relative w-full py-4 px-6 bg-gradient-to-r from-brand-primary via-brand-primary to-brand-royal dark:from-brand-medRed dark:to-brand-royal hover:shadow-2xl hover:shadow-brand-primary/30 text-white font-bold text-lg rounded-2xl transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:pointer-events-none overflow-hidden"
                 >
-                  <span className="relative z-10 flex items-center gap-2">
-                    <RefreshCw size={18} className="group-hover:rotate-180 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out skew-x-12" />
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    <RefreshCw size={20} className="group-hover:rotate-180 transition-transform duration-500" strokeWidth={2.5} />
                     Generate Response
                   </span>
-                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                 </button>
               </div>
             </div>
@@ -272,54 +306,54 @@ const App: React.FC = () => {
 
           {/* Output Section */}
           {generatedText && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-500">
-              
-              {/* Full Response Card */}
-              <div className="bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none border border-gray-100 dark:border-white/5 overflow-hidden">
-                <div className="bg-gray-50/50 dark:bg-white/5 px-6 py-4 border-b border-gray-100 dark:border-white/5 flex justify-between items-center">
-                   <h3 className="font-semibold text-gray-700 dark:text-gray-200">Full Response</h3>
-                   <button 
-                     onClick={() => copyToClipboard(generatedText)}
-                     className="text-xs font-medium bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 hover:border-brand-primary text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
-                   >
-                     <Copy size={12} />
-                     Copy All
-                   </button>
-                </div>
-                <div className="p-0">
-                  <textarea
-                    readOnly
-                    value={generatedText}
-                    className="w-full h-40 p-6 bg-transparent text-gray-600 dark:text-gray-300 resize-none focus:outline-none font-medium leading-relaxed"
-                  />
-                </div>
-              </div>
+            <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out">
 
               {/* Line by Line Breakdown */}
-              <div className="bg-white/60 dark:bg-[#1a1a1a]/60 backdrop-blur-md rounded-3xl p-6 border border-gray-100 dark:border-white/5">
-                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wide mb-4 px-2">
-                  Line-by-Line Breakdown
-                </h3>
-                <div className="space-y-3">
-                  {generatedText.split('\n').filter(line => line.trim() !== '').map((line, index) => (
-                    <button 
-                      key={index}
-                      onClick={() => copyToClipboard(line)}
-                      className="w-full text-left group flex items-start gap-4 p-4 bg-white dark:bg-[#252525] border border-gray-200 dark:border-neutral-700/50 rounded-xl shadow-sm hover:shadow-md hover:border-brand-primary/30 dark:hover:border-brand-pink/30 hover:-translate-y-0.5 transition-all duration-200"
-                    >
-                      <div className="min-w-[24px] pt-1">
-                        <div className="w-6 h-6 rounded-full bg-gray-100 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-gray-500 dark:text-gray-400 group-hover:bg-brand-primary group-hover:text-white dark:group-hover:bg-brand-medRed transition-colors">
-                          {index + 1}
+              <div className="bg-white/70 dark:bg-[#1a1a1a]/70 backdrop-blur-xl rounded-[2rem] p-6 md:p-8 border border-white/60 dark:border-white/10 shadow-lg">
+                <div className="flex justify-between items-center mb-6 px-2">
+                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-royal"></span>
+                    Breakdown
+                  </h3>
+                  <button
+                    onClick={() => copyToClipboard(generatedText)}
+                    className="text-xs font-bold bg-gray-100 dark:bg-white/10 border border-transparent hover:border-brand-royal hover:text-brand-royal text-gray-600 dark:text-gray-300 px-4 py-2 rounded-xl flex items-center gap-2 transition-all duration-200"
+                  >
+                    <Copy size={14} />
+                    COPY FULL
+                  </button>
+                </div>
+                <div className="space-y-4">
+                  {generatedText.split('\n').filter(line => line.trim() !== '').map((line, index) => {
+                    // Cyclic colors for the numbers
+                    const colors = [
+                      'bg-brand-primary text-white',
+                      'bg-brand-royal text-white',
+                      'bg-brand-vivid text-white',
+                      'bg-brand-ocean text-white'
+                    ];
+                    const colorClass = colors[index % colors.length];
+
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => copyToClipboard(line)}
+                        className="w-full text-left group flex items-start gap-5 p-5 bg-white dark:bg-[#252525] border border-gray-100 dark:border-neutral-700/50 rounded-2xl shadow-sm hover:shadow-xl hover:shadow-brand-royal/5 hover:border-brand-royal/20 dark:hover:border-brand-royal/30 hover:-translate-y-1 transition-all duration-200"
+                      >
+                        <div className="min-w-[28px] pt-0.5">
+                          <div className={`w-7 h-7 rounded-lg ${colorClass} shadow-lg shadow-current/20 flex items-center justify-center text-xs font-bold transition-transform group-hover:scale-110 duration-300`}>
+                            {index + 1}
+                          </div>
                         </div>
-                      </div>
-                      <p className="flex-1 text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
-                        {line}
-                      </p>
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity self-center text-brand-primary dark:text-brand-pink">
-                        <Copy size={16} />
-                      </div>
-                    </button>
-                  ))}
+                        <p className="flex-1 text-base text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+                          {line}
+                        </p>
+                        <div className="opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-x-2 group-hover:translate-x-0 self-center text-brand-royal dark:text-brand-vivid">
+                          <Copy size={18} strokeWidth={2.5} />
+                        </div>
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
 
@@ -329,13 +363,13 @@ const App: React.FC = () => {
       </div>
 
       {/* Toast Notification */}
-      <div 
-        className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3.5 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] font-medium transition-all duration-300 cubic-bezier(0.16, 1, 0.3, 1)
-          ${toastMessage ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-8 opacity-0 scale-95 pointer-events-none'}
+      <div
+        className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-3 bg-gray-900/90 dark:bg-white/90 backdrop-blur text-white dark:text-gray-900 px-6 py-4 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] font-semibold transition-all duration-500 cubic-bezier(0.16, 1, 0.3, 1)
+          ${toastMessage ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-12 opacity-0 scale-90 pointer-events-none'}
         `}
       >
-        <div className="bg-green-500/20 p-1 rounded-full">
-          <Check size={16} className="text-green-500" strokeWidth={3} />
+        <div className="bg-green-500 p-1 rounded-full text-white">
+          <Check size={14} strokeWidth={4} />
         </div>
         {toastMessage}
       </div>
