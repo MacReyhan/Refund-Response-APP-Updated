@@ -100,7 +100,7 @@ export const generateRefundResponse = (data: FormData): string => {
       response += `For any UPI transaction, I request you to check the bank account statement for a refund. Search for a refund with the keyword 'Flipkart'.`;
     }
     else if (safeRrn && isUpiGroup) {
-      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} by ${formattedSLA} with your bank reference number ${safeRrn}.\n`;
+      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} by ${formattedSLA}, with your bank reference number ${safeRrn}.\n`;
       response += `Check the bank account statement from ${today} date to the present date (use the bank's app/website/ or contact customer care/bank statement or passbook).\n`;
       response += `For any UPI transaction, I request you to check the bank account statement for a refund. Search for a refund with the keyword 'Flipkart'.`;
     }
@@ -110,7 +110,7 @@ export const generateRefundResponse = (data: FormData): string => {
       response += `For the credit card transaction, verify both the billed and unbilled sections of the bank statement to view the refund amount. Search for a refund with the keyword 'Flipkart'.`;
     }
     else if (safeRrn && isCreditCard) {
-      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} by ${formattedSLA} with your bank reference number ${safeRrn}.\n`;
+      response = `Rs ${amount} for your Minutes order will be refunded to your ${mode} by ${formattedSLA}, with your bank reference number ${safeRrn}.\n`;
       response += `Check the credit card statement from ${today} date to the present date (use the bank's app/website/ or contact customer care/bank statement or passbook).\n`;
       response += `For the credit card transaction, verify both the billed and unbilled sections of the bank statement to view the refund amount. Search for a refund with the keyword 'Flipkart'.`;
     }
@@ -131,7 +131,7 @@ export const generateRefundResponse = (data: FormData): string => {
 
   // --- COMPLETED (POST SLA) ---
   if (status === RefundStatus.CompletedPost) {
-    response = `Rs ${amount} for the item was refunded to ${mode} and should reflect in your account latest by ${formattedSLA}.\\n`;
+    response = `Rs ${amount} for the item was refunded to ${mode} and should reflect in your account latest by ${formattedSLA}. Refund reference number: ${safeRrn}.\n`;
 
     if (mode === RefundMode.CreditCard) {
       response += `Check the credit card statement from ${today} date to the present date (use the bank's app/website/ or contact customer care/bank statement or passbook).\n`;

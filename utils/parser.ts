@@ -35,6 +35,7 @@ export const parseRefundText = (text: string): Partial<FormData> => {
         const modeStr = modeMatch.trim();
         // Simple matching logical for now, can be expanded
         if (modeStr.includes("Credit Card")) result.mode = RefundMode.CreditCard;
+        else if (modeStr.includes("FK UPI") || modeStr.includes("Flipkart UPI")) result.mode = RefundMode.FlipkartUPI;
         else if (modeStr.includes("UPI") || modeStr.toLowerCase().includes("upi intent")) result.mode = RefundMode.UPI;
         else if (modeStr.includes("Debit")) result.mode = RefundMode.DebitCard;
         else if (modeStr.includes("NetBanking")) result.mode = RefundMode.NetBanking;
