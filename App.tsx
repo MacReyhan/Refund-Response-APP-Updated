@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, Moon, Sun, Copy, Check, ChevronDown, RefreshCw, RotateCcw, Sparkles } from 'lucide-react';
 import Sidebar from './components/Sidebar';
+import ChatWidget from './components/ChatWidget';
 import { RefundMode, RefundStatus, FormData } from './types';
 import { generateRefundResponse } from './utils/responseLogic';
 
@@ -88,6 +89,12 @@ const App: React.FC = () => {
     }
   };
 
+  const handleDataExtracted = (data: Partial<FormData>) => {
+    setFormData(prev => ({ ...prev, ...data }));
+    setToastMessage("Form Auto-Filled!");
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
   return (
     <div className={`min-h-screen bg-slate-50 dark:bg-[#0f0f0f] flex font-sans text-slate-800 dark:text-slate-100 transition-colors duration-300 relative overflow-hidden`}>
 
@@ -103,6 +110,10 @@ const App: React.FC = () => {
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
         onCopy={copyToClipboard}
+        smsContext={{
+          firstSentence: generatedText ? generatedText.split('\n')[0] : '', // Safe split
+          isVisible: formData.mode !== RefundMode.SuperCoins && formData.mode !== RefundMode.GiftCardWallet && formData.mode !== RefundMode.GiftCardQC
+        }}
       />
 
       {/* Main Content Area */}
@@ -373,6 +384,9 @@ const App: React.FC = () => {
         </div>
         {toastMessage}
       </div>
+
+      {/* Chat Widget */}
+      <ChatWidget onDataExtracted={handleDataExtracted} />
 
     </div>
   );
