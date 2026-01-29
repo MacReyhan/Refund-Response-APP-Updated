@@ -94,4 +94,15 @@ Bank reference no
 console.log("\n--- Testing Credit Card With RRN ---");
 console.log(parseRefundText(exampleCreditCardWithRRN));
 
+const exampleSuperCoins = `
+Mode
+Coin
+Amount(Rs)
+100
+`;
+
+console.log("\n--- Testing SuperCoins (Coin) ---");
+console.log(parseRefundText(exampleSuperCoins));
+
+
 
