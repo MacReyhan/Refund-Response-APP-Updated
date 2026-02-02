@@ -115,15 +115,15 @@ export const generateRefundResponse = (data: FormData): string => {
       response += `For the credit card transaction, verify both the billed and unbilled sections of the bank statement to view the refund amount. Search for a refund with the keyword 'Flipkart'.`;
     }
     else if (mode === RefundMode.GiftCardWallet) {
-      response = `The Gift Card refund of Rs ${amount} will be credited by ${formattedSLA}.\\n\\n`;
-      response += `To view Gift Card balance: - {For App} Go to 'Saved credit/Debit & gift cards' under 'Account'. - {For Website} Go to 'My Profile' >> Select 'Gift Cards' under Payments.\\n\\n`;
-      response += `Gift Card is valid for one year from the date of purchase.\\n`;
+      response = `The Gift Card refund of Rs ${amount} will be credited by ${formattedSLA}.\n`;
+      response += `To view Gift Card balance: - {For App} Go to 'Saved credit/Debit & gift cards' under 'Account'. - {For Website} Go to 'My Profile' >> Select 'Gift Cards' under Payments.\n`;
+      response += `Gift Card is valid for one year from the date of purchase.\n`;
       response += `SMS will be sent every time a customer uses a Gift Card or a refund of the Gift Card is initiated (easy transaction tracking).`;
     }
     else if (mode === RefundMode.GiftCardQC) {
-      response = `I can see that the refund of Rs ${amount} for your order was added to the Gift Card on ${today}, and the details have been sent to the registered email address used to buy the Gift Card.\n\n`;
-      response += `Steps to check Gift Card balance [Website Only]: Go to 'Gift Card' section >>> 'Check Gift Card Balance' >>> Enter the Gift Card number and PIN\n\n`;
-      response += `You can add the Card to the 'Wallet' section for ease of usage.\n\n`;
+      response = `I can see that the refund of Rs ${amount} for your order was added to the Gift Card on ${today}, and the details have been sent to the registered email address used to buy the Gift Card.\n`;
+      response += `Steps to check Gift Card balance [Website Only]: Go to 'Gift Card' section >>> 'Check Gift Card Balance' >>> Enter the Gift Card number and PIN\n`;
+      response += `You can add the Card to the 'Wallet' section for ease of usage.\n`;
       response += `If you are unable to find it, please follow these steps: - Click here: https://www.flipkart.com/account/orders - Select the particular order. - Tap 'Resend Gift Card' option.`;
     }
     return response;
