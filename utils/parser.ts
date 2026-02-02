@@ -41,8 +41,8 @@ export const parseRefundText = (text: string): Partial<FormData> => {
         else if (modeStr.includes("NetBanking")) result.mode = RefundMode.NetBanking;
         else if (modeStr.includes("NEFT")) result.mode = RefundMode.NEFT;
         else if (modeStr.includes("IMPS")) result.mode = RefundMode.IMPS;
-        else if (modeStr.toLowerCase().includes("coin")) result.mode = RefundMode.SuperCoins;
-        else if (modeStr.includes("Gift Card")) result.mode = RefundMode.GiftCardWallet; // Defaulting
+        else if (modeStr.includes("Coin")) result.mode = RefundMode.SuperCoins;
+        else if (modeStr.includes("GC")) result.mode = RefundMode.GiftCardWallet; // Defaulting
     }
 
     // 3. SLA
