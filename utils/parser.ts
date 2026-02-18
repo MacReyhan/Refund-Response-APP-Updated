@@ -32,17 +32,18 @@ export const parseRefundText = (text: string): Partial<FormData> => {
 
     if (modeMatch) {
         // Map string to Enum if possible
-        const modeStr = modeMatch.trim();
+        const modeStr = modeMatch.trim().toLowerCase();
         // Simple matching logical for now, can be expanded
-        if (modeStr.includes("Credit Card")) result.mode = RefundMode.CreditCard;
-        else if (modeStr.includes("FK UPI") || modeStr.includes("Flipkart UPI")) result.mode = RefundMode.FlipkartUPI;
-        else if (modeStr.includes("UPI") || modeStr.toLowerCase().includes("upi intent")) result.mode = RefundMode.UPI;
-        else if (modeStr.includes("Debit")) result.mode = RefundMode.DebitCard;
-        else if (modeStr.includes("NetBanking")) result.mode = RefundMode.NetBanking;
-        else if (modeStr.includes("NEFT")) result.mode = RefundMode.NEFT;
-        else if (modeStr.includes("IMPS")) result.mode = RefundMode.IMPS;
-        else if (modeStr.includes("Coin")) result.mode = RefundMode.SuperCoins;
-        else if (modeStr.includes("GC")) result.mode = RefundMode.GiftCardWallet; // Defaulting
+        if (modeStr.includes("credit card emi")) result.mode = RefundMode.CreditCardEMI;
+        else if (modeStr.includes("credit card")) result.mode = RefundMode.CreditCard;
+        else if (modeStr.includes("fk upi") || modeStr.includes("flipkart upi")) result.mode = RefundMode.FlipkartUPI;
+        else if (modeStr.includes("upi") || modeStr.includes("upi intent")) result.mode = RefundMode.UPI;
+        else if (modeStr.includes("debit")) result.mode = RefundMode.DebitCard;
+        else if (modeStr.includes("net") && modeStr.includes("banking")) result.mode = RefundMode.NetBanking; // Matches NetBanking, Net Banking
+        else if (modeStr.includes("neft")) result.mode = RefundMode.NEFT;
+        else if (modeStr.includes("imps")) result.mode = RefundMode.IMPS;
+        else if (modeStr.includes("coin")) result.mode = RefundMode.SuperCoins;
+        else if (modeStr.includes("gc")) result.mode = RefundMode.GiftCardWallet; // Defaulting
     }
 
     // 3. SLA

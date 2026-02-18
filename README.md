@@ -1,20 +1,48 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Refund Response Generator
 
-# Run and deploy your AI Studio app
+A powerful tool designed for customer support agents to generate standardized, accurate, and empathetic refund responses for Flipkart customers.
 
-This contains everything you need to run your app locally.
+## 🔗 Live Application
+**Access the tool here:** [https://refund-response-app.web.app/](https://refund-response-app.web.app/)
 
-View your app in AI Studio: https://ai.studio/apps/drive/1kNlo422ghWlpwS4QtNqs-R6pwX00P9KK
+## 🚀 About the Application
 
-## Run Locally
+The **Refund Response Generator** streamlines the workflow for support agents by automating the creation of refund status messages. Instead of manually typing out each response, agents can simply input the refund details, and the application generates a perfectly formatted message tailored to the specific refund mode and status.
 
-**Prerequisites:**  Node.js
+### Key Features:
 
+*   **Smart Auto-Detection**: Simply paste the raw refund details (e.g., "Amount (Rs) 953... Mode Credit Card"), and the app automatically fills in the Amount, RRN, Mode, and SLA Date.
+*   **Dynamic SLA Handling**:
+    *   Automatically calculates if a refund is "Within SLA" or "Post SLA".
+    *   Formats dates intelligently (e.g., "by 28 Dec" vs "within 2-4 hours").
+    *   Auto-switches status to **Completed (Post SLA)** if the current time has passed the SLA deadline.
+*   **Comprehensive Mode Support**:
+    *   **Bank & Cards**: Credit Card, Credit Card EMI, Debit Card, NetBanking, NEFT, IMPS.
+    *   **UPI**: Unified Payment Interface, Flipkart UPI.
+    *   **Wallets & Others**: Gift Cards, SuperCoins.
+*   **Response Breakdown**: Generated messages are broken down line-by-line for easy reading and copying.
+*   **Sidebar Snippets**: Quick access to common phrases (e.g., "SMS sent", "Evening Mode" greetings) and SMS templates.
+*   **Dark Mode**: A built-in dark theme for comfortable usage during long shifts.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 🛠️ How it Works
+
+1.  **Input Details**: Enter the Refund Amount, Reference Number (RRN), and Dates manually, or use the **Chat Widget** to paste raw text for auto-extraction.
+2.  **Select Context**: Choose the **Refund Mode** (e.g., UPI, Credit Card) and the **Status** (Processing, Completed - Within SLA, Completed - Post SLA).
+3.  **Generate**: Click "Generate Response" to create the customer-facing message.
+4.  **Copy & Send**: Click on individual lines or the "Copy Full" button to grab the text and send it to the customer.
+
+## 💻 Running Locally
+
+To run this project on your local machine:
+
+1.  **Clone the repository**
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    # or
+    pnpm install
+    ```
+3.  **Start the development server**:
+    ```bash
+    npm run dev
+    ```

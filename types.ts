@@ -1,5 +1,6 @@
 export enum RefundMode {
   CreditCard = "Credit Card",
+  CreditCardEMI = "Credit Card EMI",
   UPI = "UPI",
   DebitCard = "Debit Card",
   NetBanking = "NetBanking",

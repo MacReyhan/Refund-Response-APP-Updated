@@ -3,7 +3,7 @@ import { Menu, Moon, Sun, Copy, Check, ChevronDown, RefreshCw, RotateCcw, Sparkl
 import Sidebar from './components/Sidebar';
 import ChatWidget from './components/ChatWidget';
 import { RefundMode, RefundStatus, FormData } from './types';
-import { generateRefundResponse } from './utils/responseLogic';
+import { generateRefundResponse, parseCustomDate } from './utils/responseLogic';
 
 const App: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
@@ -41,6 +41,26 @@ const App: React.FC = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Auto-Select "Post SLA" Status if current time > SLA time
+  useEffect(() => {
+    if (formData.sla) {
+      const slaDate = parseCustomDate(formData.sla);
+      if (slaDate) {
+        const now = new Date();
+        // If SLA date is in the past, auto-switch to CompletedPost
+        if (now > slaDate) {
+          setFormData(prev => {
+            // Only update if not already CompletedPost to avoid loops/unnecessary renders
+            if (prev.status !== RefundStatus.CompletedPost) {
+              return { ...prev, status: RefundStatus.CompletedPost };
+            }
+            return prev;
+          });
+        }
+      }
+    }
+  }, [formData.sla]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -90,7 +110,16 @@ const App: React.FC = () => {
   };
 
   const handleDataExtracted = (data: Partial<FormData>) => {
-    setFormData(prev => ({ ...prev, ...data }));
+    setFormData({
+      amount: '',
+      rrn: '',
+      initDate: '',
+      mode: RefundMode.CreditCard,
+      status: RefundStatus.Processing,
+      superCoinsBalance: '',
+      sla: '',
+      ...data
+    });
     setToastMessage("Form Auto-Filled!");
     setTimeout(() => setToastMessage(null), 3000);
   };
@@ -112,7 +141,7 @@ const App: React.FC = () => {
         onCopy={copyToClipboard}
         smsContext={{
           firstSentence: generatedText ? generatedText.split('\n')[0] : '', // Safe split
-          isVisible: formData.mode !== RefundMode.SuperCoins && formData.mode !== RefundMode.GiftCardWallet && formData.mode !== RefundMode.GiftCardQC
+          isVisible: true
         }}
       />
 
