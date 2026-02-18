@@ -3,7 +3,7 @@
 A powerful tool designed for customer support agents to generate standardized, accurate, and empathetic refund responses for Flipkart customers.
 
 ## 🔗 Live Application
-**Access the tool here:** [https://refund-response-app.web.app/](https://refund-response-app.web.app/)
+**Access the tool here:** [https://refund-response.pages.dev/](https://refund-response.pages.dev/)
 
 ## 🚀 About the Application
 
@@ -46,3 +46,17 @@ To run this project on your local machine:
     ```bash
     npm run dev
     ```
+
+## 🚀 Deployment
+
+To deploy this application to Cloudflare Pages:
+
+1.  **Build the project**:
+    ```bash
+    pnpm run build
+    ```
+2.  **Deploy to Cloudflare Pages**:
+    ```bash
+    npx wrangler pages deploy dist --project-name refund-response
+    ```
+    This command will upload the `dist` folder to the `refund-response` project on Cloudflare.
