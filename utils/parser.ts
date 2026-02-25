@@ -48,34 +48,10 @@ export const parseRefundText = (text: string): Partial<FormData> => {
 
     // 3. SLA
     // Pattern: SLA\n03 Feb 26, 08:47 AM
+    // Always keep the full SLA string (including time) as-is
     const slaFull = extract(/SLA\n(.+)/i);
     if (slaFull) {
-        try {
-            // Parse the SLA string
-            // Expected format: "28 Dec 25, 02:44 am" or similar from example "03 Feb 26, 08:47 AM"
-            const cleanedSla = slaFull.replace(/(\d+)(st|nd|rd|th)/, '$1'); // Remove ordinal if any
-            const slaDate = new Date(cleanedSla);
-            const now = new Date(); // In real usage this will be user's current time
-
-            if (!isNaN(slaDate.getTime())) {
-                const diffMs = slaDate.getTime() - now.getTime();
-                const diffHours = diffMs / (1000 * 60 * 60);
-
-                if (diffHours <= 3 && diffHours > 0) {
-                    // Keep full format if within 3 hours
-                    result.sla = slaFull;
-                } else {
-                    // Strip time: "03 Feb 26"
-                    // Regex to take first 3 parts
-                    const dateOnly = slaFull.split(',')[0].trim();
-                    result.sla = dateOnly;
-                }
-            } else {
-                result.sla = slaFull; // Fallback
-            }
-        } catch (e) {
-            result.sla = slaFull;
-        }
+        result.sla = slaFull;
     }
 
     // 4. Status
