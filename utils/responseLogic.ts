@@ -110,13 +110,8 @@ export const generateRefundResponse = (data: FormData): string => {
 
   let formattedSLA = '';
   if (sla) {
-    const slaDate = parseCustomDate(sla);
-    const now = new Date();
-    // Check if within 24 hours (86400000 ms)
-    const isWithin24h = slaDate && Math.abs(slaDate.getTime() - now.getTime()) < 86400000;
-
-    // Use format with time if within 24h AND original input has time (contains comma)
-    if (isWithin24h && sla.includes(',')) {
+    // Always include time if the original input has time (contains comma)
+    if (sla.includes(',')) {
       formattedSLA = formatInputDate(sla);
     } else {
       formattedSLA = formatSLADate(sla);
