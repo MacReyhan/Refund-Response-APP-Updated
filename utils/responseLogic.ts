@@ -2,47 +2,14 @@ import { FormData, RefundMode, RefundStatus } from '../types';
 
 export const parseCustomDate = (dateStr: string): Date | null => {
   if (!dateStr) return null;
-  // Try parsing "28 Dec 25, 02:44 am"
-  const regex = /^(\d{1,2})\s([A-Za-z]{3})\s(\d{2}),\s(\d{2}):(\d{2})\s([aA][mM]|[pP][mM])$/;
-  const match = dateStr.match(regex);
+  const date = new Date(dateStr);
 
-  if (match) {
-    const day = parseInt(match[1]);
-    const monthStr = match[2];
-    const yearShort = parseInt(match[3]);
-    let hours = parseInt(match[4]);
-    const minutes = parseInt(match[5]);
-    const ampm = match[6].toLowerCase();
-
-    const months: { [key: string]: number } = {
-      'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3,
-      'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7,
-      'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
-    };
-
-    if (ampm === 'pm' && hours < 12) hours += 12;
-    if (ampm === 'am' && hours === 12) hours = 0;
-
-    const yearFull = 2000 + yearShort;
-    return new Date(yearFull, months[monthStr] || 0, day, hours, minutes);
-  }
-
-  // Try parsing "28 Dec 25" (Date only) context for completion check
-  const dateRegex = /^(\d{1,2})\s([A-Za-z]{3})\s(\d{2})$/;
-  const dateMatch = dateStr.match(dateRegex);
-  if (dateMatch) {
-    const day = parseInt(dateMatch[1]);
-    const monthStr = dateMatch[2];
-    const yearShort = parseInt(dateMatch[3]);
-    const months: { [key: string]: number } = {
-      'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3,
-      'May': 4, 'Jun': 5, 'Jul': 6, 'Aug': 7,
-      'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
-    };
-    const yearFull = 2000 + yearShort;
-    // Return end of day for date-only SLA? Or specific time? usage implies deadline.
-    // Let's assume end of day (23:59:59) for "Post SLA" check consistency if only date provided.
-    return new Date(yearFull, months[monthStr] || 0, day, 23, 59, 59);
+  if (!isNaN(date.getTime())) {
+    // If it's a date-only string (no colon and no am/pm), assume end of day limit
+    if (!dateStr.includes(':') && !dateStr.toLowerCase().includes('am') && !dateStr.toLowerCase().includes('pm')) {
+      date.setHours(23, 59, 59, 999);
+    }
+    return date;
   }
 
   return null;
@@ -56,47 +23,41 @@ export const getTodaysFormattedDate = (): string => {
 
 export const formatInputDate = (inputStr: string): string => {
   if (!inputStr) return "[Refund Initiated Date and Time]";
-  // Regex matches format: 28 Dec 25, 02:44 am
-  const regex = /^(\d{1,2})\s([A-Za-z]{3})\s(\d{2}),\s(.*)$/;
-  const match = inputStr.match(regex);
-  if (match) {
-    const day = match[1];
-    const monthShort = match[2];
-    const yearShort = match[3];
-    const time = match[4];
-    const months: { [key: string]: string } = {
-      'Jan': 'January', 'Feb': 'February', 'Mar': 'March', 'Apr': 'April',
-      'May': 'May', 'Jun': 'June', 'Jul': 'July', 'Aug': 'August',
-      'Sep': 'September', 'Oct': 'October', 'Nov': 'November', 'Dec': 'December'
+
+  const date = new Date(inputStr);
+  if (!isNaN(date.getTime())) {
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     };
-    const monthFull = months[monthShort] || monthShort;
-    const yearFull = "20" + yearShort;
-    return `${monthFull} ${day}, ${yearFull} ${time}`;
+    const timeOptions: Intl.DateTimeFormatOptions = {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    };
+    const datePart = date.toLocaleDateString('en-US', options);
+    const timePart = date.toLocaleTimeString('en-US', timeOptions).toLowerCase();
+    return `${datePart} ${timePart}`;
   }
+
   return inputStr;
 };
 
 export const formatSLADate = (inputStr: string): string => {
   if (!inputStr) return "";
-  // Regex matches format: 28 Dec 25 (Date only)
-  const regex = /^(\d{1,2})\s([A-Za-z]{3})\s(\d{2})$/;
-  const match = inputStr.match(regex);
 
-  if (match) {
-    const day = match[1];
-    const monthShort = match[2];
-    const yearShort = match[3];
-    const months: { [key: string]: string } = {
-      'Jan': 'January', 'Feb': 'February', 'Mar': 'March', 'Apr': 'April',
-      'May': 'May', 'Jun': 'June', 'Jul': 'July', 'Aug': 'August',
-      'Sep': 'September', 'Oct': 'October', 'Nov': 'November', 'Dec': 'December'
+  const date = new Date(inputStr);
+  if (!isNaN(date.getTime())) {
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     };
-    const monthFull = months[monthShort] || monthShort;
-    const yearFull = "20" + yearShort;
-    return `${monthFull} ${day}, ${yearFull}`;
+    return date.toLocaleDateString('en-US', options);
   }
 
-  // Fallback to existing formatter if format doesn't match (e.g. contains time)
+  // Fallback to existing formatter if format doesn't match
   return formatInputDate(inputStr);
 };
 

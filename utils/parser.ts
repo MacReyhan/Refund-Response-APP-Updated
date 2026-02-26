@@ -21,13 +21,13 @@ export const parseRefundText = (text: string): Partial<FormData> => {
     // Pattern: Payments and Refunds ... Mode\nCredit Card
 
     let modeMatch = null;
-    const mainSection = text.match(/Payments and Refunds[\s\S]*?(Mode\n.+)/i);
+    const mainSection = text.match(/Payments and Refunds[\s\S]*?(Mode\r?\n.+)/i);
     if (mainSection) {
-        modeMatch = mainSection[1].split('\n')[1]; // Get value after Mode\n
+        modeMatch = mainSection[1].split(/\r?\n/)[1]; // Get value after Mode\r?\n
     }
 
     if (!modeMatch) {
-        modeMatch = extract(/Mode\n(.+)/i);
+        modeMatch = extract(/Mode\r?\n([^\n]+)/i);
     }
 
     if (modeMatch) {
@@ -47,9 +47,9 @@ export const parseRefundText = (text: string): Partial<FormData> => {
     }
 
     // 3. SLA
-    // Pattern: SLA\n03 Feb 26, 08:47 AM
+    // Pattern: SLA\n03 Feb 26, 08:47 AM or SLA: 03 Feb 26, 08:47 AM
     // Always keep the full SLA string (including time) as-is
-    const slaFull = extract(/SLA\n(.+)/i);
+    const slaFull = extract(/SLA[\s:]*([^\n]+)/i);
     if (slaFull) {
         result.sla = slaFull;
     }
